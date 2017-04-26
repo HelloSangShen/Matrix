@@ -124,7 +124,7 @@ Matrix Matrix::subMatrix(size_t rs, size_t re, size_t cs, size_t ce) const
 	// try to use "except" to broadcast the exception
     
     if(_t == 1){
-        if(!(rs <= re && re <= _nRow && cs <= ce && ce <= _nCol)){
+        if(!(rs <= re && re < _nRow && cs <= ce && ce < _nCol)){
             // out of range
             throw range_error("subMatrix :    Parameters Out Of Range");
         }else{
@@ -160,6 +160,9 @@ std::vector<double> Matrix::getRow(size_t r) const
 {
 	// get all element in r-row and push it back in a vector
 	// remember check range first
+    if((_t == 1 && r > _nRow) || (_t == 0 && r > _nCol)){
+        throw range_error("getRow() :    Out Of Range");
+    }
     vector<double> vec;
     if(_t == 1){
         for(int i = 0; i < _nCol; i++){
@@ -177,6 +180,9 @@ std::vector<double> Matrix::getCol(size_t c) const
 {
 	// get all element in c-column and push it back in a vector
 	// remember check range first
+    if((_t == 1 && c > _nCol) || (_t == 0 && c > _nRow)){
+        throw range_error("getCol() :    Out Of Range");
+    }
     vector<double> vec;
     if(_t == 1){
         for(int i = 0; i < _nRow; i++){

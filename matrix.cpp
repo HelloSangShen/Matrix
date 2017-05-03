@@ -1,3 +1,9 @@
+//
+//  matrix.cpp
+//
+//  Created by HelloSangShen on 2017/4/26.
+//  Copyright © 2017年 HelloSangShen. All rights reserved.
+//
 #include "matrix.h"
 #include <stdexcept>
 #include <iostream>

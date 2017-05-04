@@ -21,6 +21,7 @@ private:
 	int _t;
 	bool checkRange(size_t r, size_t c) const;
 	void swap(Matrix& mat);
+    
 
 public:
 	// construct a r-row and c-column matrix with all init element

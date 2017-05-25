@@ -27,11 +27,12 @@ private:
     // number of row and column
     size_t _nRow, _nCol;
     // flag to indicate row-first or column-first
-    int _t;
+
     bool checkRange(size_t r, size_t c) const;
     void swap(Matrix& mat);
     
 public:
+    int _t;
     // construct a r-row and c-column matrix with all init element
     Matrix(size_t r, size_t c, T init);
     // copy constructor

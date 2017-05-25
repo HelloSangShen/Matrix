@@ -1,3 +1,9 @@
+//  matrix.cpp
+//
+//  Created by HelloSangShen on 2017/5/12.
+//  Copyright © 2017年 HelloSangShen. All rights reserved.
+//
+
 #include "fft.h"
 
 using std::complex;
@@ -7,10 +13,12 @@ size_t calcN(size_t length) {
     // check if length is power of 2
     // if it is, just return length
     // if not, get the correct N and return
+    
     if(0 == (length & (length-1))){
         return length;
     }
     
+    // calc the correct N
     vector<size_t> vec;
     while(length){
         vec.push_back(length);
@@ -24,24 +32,14 @@ size_t calcN(size_t length) {
     return res + 1;
 }
 
-complex<double> pow(complex<double> base, int exponent) {
-    // return base^{exponent}
-    complex<double> res = base;
-    for(int i = 1; i < exponent; i++){
-        res *= base;
-    }
-    return res;
-}
-
-
 complex<double> wnk(size_t N, int k){
-    
+    // calc the W_{N}^{k}
     double p = 2 * M_PI * k /N;
     return complex<double>(cos(p), -1 * sin(p));
 }
 
-complex<double> w_minusn_k(size_t N, int k){
-    
+complex<double> w_n_minusk(size_t N, int k){
+    // calc the W_{N}^{-k}
     double p = -2 * M_PI * k /N;
     return complex<double>(cos(p), -1 * sin(p));
 }
@@ -49,13 +47,17 @@ complex<double> w_minusn_k(size_t N, int k){
 
 vector<complex<double> >
 calfft(vector<complex<double> > data, size_t N, char patten) {
-
+    // patten:
+    //         'i': ifft
+    //         'f': fft
+    
     // change length to make it beign just the power of 2
     N = calcN(N);
     // append 0 if necessary
     while (N > data.size()){
         data.push_back(complex<double>(0.0, 0.0));
     }
+    
     // start fft
     // check if N is 0, 1, 2
     // if N is 0 or 1, just return data
@@ -69,8 +71,8 @@ calfft(vector<complex<double> > data, size_t N, char patten) {
         return data;
     }else if(N == 2){
         if(patten == 'i'){
-            res.push_back(w_minusn_k(2, 0)*data[0] + w_minusn_k(2, 0)*data[1]);
-            res.push_back(w_minusn_k(2, 0)*data[0] + w_minusn_k(2, 1)*data[1]);
+            res.push_back(w_n_minusk(2, 0)*data[0] + w_n_minusk(2, 0)*data[1]);
+            res.push_back(w_n_minusk(2, 0)*data[0] + w_n_minusk(2, 1)*data[1]);
         }else if(patten == 'f'){
             res.push_back(wnk(2, 0)*data[0] + wnk(2, 0)*data[1]);
             res.push_back(wnk(2, 0)*data[0] + wnk(2, 1)*data[1]);
@@ -88,21 +90,21 @@ calfft(vector<complex<double> > data, size_t N, char patten) {
             }
         }
         
-        // fft seperately
+        // fft/ifft seperately
         vector<complex<double> > evenRes = calfft(evenItems, N/2, patten);
         vector<complex<double> > oddRes = calfft(oddItems, N/2, patten);
         
         // construct
         for(int i = 0; i < N/2; i++){
             if(patten == 'i'){
-                res.push_back(evenRes[i] + w_minusn_k(N, i) * oddRes[i]);
+                res.push_back(evenRes[i] + w_n_minusk(N, i) * oddRes[i]);
             }else if(patten == 'f'){
                 res.push_back(evenRes[i] + wnk(N, i) * oddRes[i]);
             }
         }
         for(int i = 0; i < N/2; i++){
             if(patten == 'i'){
-                res.push_back(evenRes[i] - w_minusn_k(N, i) * oddRes[i]);
+                res.push_back(evenRes[i] - w_n_minusk(N, i) * oddRes[i]);
             }else if(patten == 'f'){
                 res.push_back(evenRes[i] - wnk(N, i) * oddRes[i]);
             }
@@ -143,6 +145,11 @@ fft(vector<double> data, size_t N)
 }
 
 vector<complex<double> >
+fft(vector<complex<double> > data, size_t N){
+    return calfft(data, N, 'f');
+}
+
+vector<complex<double> >
 ifft(vector<complex<double> > data, size_t N){
     std::vector<complex<double> > res =  calfft(data, N, 'i');
     for(int i = 0; i < res.size(); i++){
@@ -151,15 +158,11 @@ ifft(vector<complex<double> > data, size_t N){
     return res;
 }
 
-vector<complex<double> >
-fft(vector<complex<double> > data, size_t N){
-    return calfft(data, N, 'f');
-}
-
 Matrix<complex<double> >
 fftRow(const Matrix<std::complex<double> >& mat, size_t row, size_t col, char patten){
   
-    //calculate every row of the matrix
+    // calculate every row of the matrix
+    //
     Matrix<complex<double> > newMat(row, col, complex<double>(0, 0));
     for(int i = 0; i < row; i++){
         vector<complex<double>> vecRow;
@@ -169,7 +172,8 @@ fftRow(const Matrix<std::complex<double> >& mat, size_t row, size_t col, char pa
             vecRow = ifft(mat.getRow(i), col);
         }
         if(!newMat.setRow(i, vecRow)){
-            //cout << "set failed!" << endl;
+            // fail to set the row of newMat;
+            // I don't know how to solve this now;
         };
     }
     return newMat;
@@ -214,7 +218,7 @@ expand(const Matrix<complex<double> >& mat, size_t row, size_t col){
 Matrix<complex<double> >
 fft2d(const Matrix<complex<double> >& mat, size_t row, size_t col){
     Matrix<complex<double> > m = expand(mat, row, col);
-    return fftRow(fftRow(m, calcN(row), calcN(col), 'f').transpose(),calcN(row), calcN(col), 'f').transpose();
+    return fftRow(fftRow(m, calcN(row), calcN(col), 'f').transpose(),calcN(col), calcN(row), 'f').transpose();
 }
 
 Matrix<complex<double> >

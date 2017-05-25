@@ -1,3 +1,9 @@
+//  matrix.cpp
+//
+//  Created by HelloSangShen on 2017/4/26.
+//  Copyright © 2017年 HelloSangShen. All rights reserved.
+//
+
 #include "fft.h"
 #include "matrixTemplate.h"
 #include <iostream>
@@ -57,24 +63,34 @@ void test_fft()
 //    cout << fftMat3 << endl;
 //    cout << "-------------------------------------------------------" << endl;
     
-    cout << "-------------------------ifft---------------------------" << endl;
+    
+//    cout << "-------------------------ifft---------------------------" << endl;
+//    Matrix<complex<double> > matTest(5, 5, complex<double>(0,0));
+//    for(int i = 0; i < 5; i++){
+//        for(int j = 0; j < 5; j++){
+//            matTest(i, j) = complex<double>(i, j);
+//        }
+//    }
+//    cout << matTest <<endl;
+//    
+//    Matrix<complex<double> > fftMatTest = fft2d(matTest, 5, 5);
+//    cout << fftMatTest << endl;
+//    
+//    Matrix<complex<double> > ifftMatTest = ifft2d(fftMatTest, 8, 8);
+//    cout << ifftMatTest << endl;
+//    cout << "-------------------------------------------------------" << endl;
 
-
-    Matrix<complex<double> > matTest(5, 5, complex<double>(0,0));
-    for(int i = 0; i < 5; i++){
-        for(int j = 0; j < 5; j++){
-            matTest(i, j) = complex<double>(i, j);
+    Matrix<double> a(4, 9, 0);
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 9; j++){
+            a(i, j) = i * j;
         }
     }
-    cout << matTest <<endl;
     
-    Matrix<complex<double> > fftMatTest = fft2d(matTest, 5, 5);
-    cout << fftMatTest << endl;
+    cout << a << endl;
+    a.transpose();
+    cout << a << endl;
+    a.transpose();
+    cout << a << endl;
     
-    Matrix<complex<double> > ifftMatTest = ifft2d(fftMatTest, 8, 8);
-    cout << ifftMatTest << endl;
-
-    
-    cout << "-------------------------------------------------------" << endl;
-
 }

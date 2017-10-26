@@ -11,7 +11,8 @@
 * Matrix inversion
 * Affine transformation
 * Convolution
-
+* FFT & FFT2D
+* IFFT & IFFT2D
 
 # 矩阵操作类
 

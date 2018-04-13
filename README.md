@@ -7,7 +7,7 @@
 * Add、subtraction、multiplication、division
 * QImage2Matrix
 * Cyclic shift
-* Normalization of evry element
+* Normalization of every element
 * Matrix inversion
 * Affine transformation
 * Convolution
